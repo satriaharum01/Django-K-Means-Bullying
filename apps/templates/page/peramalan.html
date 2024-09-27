@@ -1,0 +1,117 @@
+{% extends "layouts/master.html" %} {% block title %} Peralaman Regresi Linear
+{% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<!-- awal isi halaman -->
+<div class="app-title">
+  <div>
+    <h1><i class="bi bi-table"></i> {{title}}</h1>
+  </div>
+  <ul class="app-breadcrumb breadcrumb side">
+    <li class="breadcrumb-item"><i class="bi bi-house-door fs-6"></i></li>
+    <li class="breadcrumb-item active"><a href="#">{{title}}</a></li>
+  </ul>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="tile">
+      <div class="tile-body">
+        <ul style="list-style: none" class="ml-0">
+          <li><strong>Koefisien (Slope):</strong> {{ slope }}</li>
+          <li><strong>Intercept:</strong> {{ intercept }}</li>
+          <li><strong>MSE:</strong> {{ mse }}</li>
+          <li><strong>R Square Error:</strong> {{ r2 }}</li>
+          <li>
+            <strong>Prediksi Permintaan Selanjutnya:</strong> {{ prediksi }}
+          </li>
+        </ul>
+      </div>
+      <h3 class="tile-title"><i> Aktual Data</i></h3>
+      <div class="tile-body">
+        <div class="table-responsive  mb-3">
+          <table
+            class="table table-hover table-bordered "
+            id="data-width"
+            width="100%"
+          >
+            <thead>
+              <tr>
+                <th style="text-align: center" width="10%">No</th>
+                <th>Periode</th>
+                <th>Permintaan</th>
+                <th>Ekspor</th>
+              </tr>
+            </thead>
+            <tbody>
+            </tbody>
+          </table>
+        </div>
+        <h3 class="tile-title"><i> Residual Output</i></h3>
+        <div class="tile-body">
+          <div class="table-responsive">
+            <table class="table table-hover table-bordered" width="100%">
+              <thead>
+                <tr>
+                  <th class="text-center">Periode</th>
+                  <th class="text-center">Aktual Y</th>
+                  <th class="text-center">Predicted Y</th>
+                  <th class="text-center">Residual</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for periode, actual, predicted, residual in data %}
+                <tr>
+                  <td class="text-center">{{ periode }}</td>
+                  <td class="text-center">{{ actual }}</td>
+                  <td class="text-center">{{ predicted }}</td>
+                  <td class="text-center">{{ residual }}</td>
+                </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- akhir isi halaman -->
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block js %}
+
+<script>
+  $(function () {
+    table = $("#data-width").DataTable({
+      searching: false,
+      lengthChange: false,
+      paging: false,
+      ordering: false,
+      info: false,
+      ajax: '{% url "data/json" %}',
+      columns: [
+        {
+          data: "DT_RowIndex",
+          name: "DT_RowIndex",
+          className: "text-center",
+        },
+        {
+          data: "periode",
+          className: "text-center",
+        },
+        {
+          data: "jumlah",
+          className: "text-center",
+        },
+        {
+          data: "ekspor",
+          className: "text-center",
+        },
+      ],
+    });
+  });
+</script>
+{% endblock js %}

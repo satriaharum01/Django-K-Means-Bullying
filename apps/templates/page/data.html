@@ -1,0 +1,223 @@
+{% extends "layouts/master.html" %} {% block title %} {{title}} {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<!-- awal isi halaman -->
+<div class="app-title">
+  <div>
+    <h1><i class="bi bi-table"></i> {{title}}</h1>
+  </div>
+  <ul class="app-breadcrumb breadcrumb side">
+    <li class="breadcrumb-item"><i class="bi bi-house-door fs-6"></i></li>
+    <li class="breadcrumb-item active"><a href="#">{{title}}</a></li>
+  </ul>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="tile">
+      <div class="tile-body mb-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-primary btn-add pull-right">
+          <i class="fa fa-plus"></i> Tambah Data
+        </button>
+      </div>
+      <div class="tile-body">
+        <div class="table-responsive">
+          <table
+            class="table table-hover table-bordered"
+            id="data-width"
+            width="100%"
+          >
+            <thead>
+              <tr>
+                <th style="text-align: center" width="10%">No</th>
+                <th>Periode</th>
+                <th>Permintaan</th>
+                <th>Ekspor</th>
+                <th style="text-align: center" width="20%">Aksi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- akhir isi halaman -->
+{% endblock content %} {% block modal %}
+
+<!-- ============ MODAL DATA =============== -->
+<div
+  class="modal fade"
+  id="compose"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="exampleModalLabel"
+  aria-hidden="true"
+>
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header justify-content-center">
+        <center>
+          <b>
+            <h4 class="modal-title" id="exampleModalLabel">Tambah Data</h4>
+          </b>
+        </center>
+      </div>
+
+      <!-- meload package untuk merender form field -->
+      {% load widget_tweaks %}
+      <form
+        action="#"
+        method="POST"
+        id="compose-form"
+        class="form-horizontal"
+        enctype="multipart/form-data"
+      >
+        {% csrf_token %}
+        <div class="modal-body">
+          <div class="form-group row mb-2">
+            <label class="col-sm-4">Periode</label>
+            <div class="col-sm-8">
+              <input
+                type="month"
+                name="periode"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row mb-2">
+            <label class="col-sm-4">Jumlah Permintaan</label>
+            <div class="col-sm-8">
+              <input
+                type="number"
+                name="jumlah"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+          <div class="form-group row">
+            <label class="col-sm-4">Jumlah Ekspor</label>
+            <div class="col-sm-8">
+              <input
+                type="number"
+                name="ekspor"
+                class="form-control"
+                required
+              />
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="reset" class="btn btn-danger" data-bs-dismiss="modal">
+            Batal
+          </button>
+          <button type="submit" class="btn btn-primary btn-simpan">
+            Simpan
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!--- END MODAL DATA --->
+{% endblock modal %}
+<!-- Specific Page JS goes HERE  -->
+{% block js %}
+
+<script>
+  $(function () {
+    table = $("#data-width").DataTable({
+      searching: false,
+      ajax: '{% url "data/json" %}',
+      columns: [
+        {
+          data: "DT_RowIndex",
+          name: "DT_RowIndex",
+          className: "text-center",
+        },
+        {
+          data: "periode",
+          className: "text-center",
+        },
+        {
+          data: "jumlah",
+          className: "text-center",
+        },
+        {
+          data: "ekspor",
+          className: "text-center",
+        },
+        {
+          data: "id",
+          className: "text-center",
+          orderable: false,
+          searchable: false,
+          render: function (data, type, row) {
+            return (
+              '<button type="button" class="btn btn-success btn-edit" data-id="' +
+              data +
+              '"><i class="fa fa-edit"></i> </button>\
+                        <a class="btn btn-danger btn-hapus" data-id="' +
+              data +
+              '" data-handler="data" href="delete/' +
+              data +
+              '">\
+                        <i class="fa fa-trash"></i> </a> \
+					              <form id="delete-form-' +
+              data +
+              '-data" action="{% url "data" %}delete/' +
+              data +
+              '" method="GET" style="display: none;">\
+                        </form>'
+            );
+          },
+        },
+      ],
+    });
+  });
+
+  //Button Trigger
+  $("body").on("click", ".btn-add", function () {
+    kosongkan();
+    jQuery("#compose-form").attr("action", "{% url 'data' %}save");
+    jQuery("#compose .modal-title").html("Tambah {{title}}");
+    jQuery("#compose").modal("toggle");
+  });
+
+  $("body").on("click", ".btn-edit", function () {
+    var id = jQuery(this).attr("data-id");
+
+    $.ajax({
+      url: "find/" + id,
+      type: "GET",
+      cache: false,
+      dataType: "json",
+      success: function (dataResult) {
+        console.log(dataResult);
+        var resultData = dataResult.data;
+        $.each(resultData, function (index, row) {
+          jQuery("#compose-form input[name=periode]").val(row.periode);
+          jQuery("#compose-form input[name=jumlah]").val(row.jumlah);
+          jQuery("#compose-form input[name=ekspor]").val(row.ekspor);
+        });
+      },
+    });
+    jQuery("#compose-form").attr("action", '{% url "data" %}update/' + id);
+    jQuery("#compose .modal-title").html("Update {{title}}");
+    jQuery("#compose").modal("toggle");
+  });
+
+  $("body").on("click", ".btn-simpan", function () {
+    Swal.fire("Data Disimpan!", "", "success");
+  });
+
+  function kosongkan() {
+    jQuery("#compose-form input[name=periode]").val("");
+    jQuery("#compose-form input[name=jumlah]").val("");
+    jQuery("#compose-form input[name=ekspor]").val("");
+  }
+</script>
+{% endblock js %}
