@@ -17,8 +17,6 @@ from sklearn.metrics import mean_squared_error, r2_score
 # Models Import
 from ..models import m_data
 
-month = ['','Januari','Febuari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
-
 # Create your views here.
 
 
@@ -31,13 +29,6 @@ def index(request):
     x = np.array([d.ekspor for d in data]).reshape(-1, 1)
     y = np.array([d.jumlah for d in data])
     z = []
-    
-    all_objs = np.array([d.periode for d in data])
-    for load in all_objs:
-        periode = load
-        bulan = int(periode[5:7])
-        load = month[bulan] +' '+ load[0:4]
-        z.append(load)
     
     # Membuat model regresi linear
     model = LinearRegression()

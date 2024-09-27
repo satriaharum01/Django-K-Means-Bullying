@@ -14,7 +14,6 @@ from ..models import m_data
 # import class Form dari file forms.py
 from .forms import DataForm
 
-month = ['','Januari','Febuari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']
 # Create your views here.
 
 @login_required(login_url="/login/")
@@ -83,7 +82,7 @@ def delete(request, data_id):
 def json(request):
     if request.method == "GET":
         results = []
-        all_objs = m_data.objects.all().order_by('-periode').values("id","jumlah","periode","ekspor")
+        all_objs = m_data.objects.all().order_by('-id').values("id","s_fisik","s_verbal","s_psikologis")
         i=1
         for load in all_objs:
             periode = load['periode']
@@ -99,7 +98,7 @@ def json(request):
 # FIND DATA OBJECT
 def find(request, data_id):
     
-    all_objs = m_data.objects.all().values("id","jumlah","periode","ekspor").filter(id=data_id)
+    all_objs = m_data.objects.all().values("id","s_fisik","s_verbal","s_psikologis").filter(id=data_id)
     print(all_objs)
     data = {"data": list(all_objs)}
     return JsonResponse(data, safe=False)
