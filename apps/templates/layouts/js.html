@@ -67,9 +67,19 @@
       cancelButtonText: "Tidak",
     }).then((result) => {
       if (result.value) {
-        Swal.fire("Data Dihapus!", "", "success");
-        document.getElementById("delete-form-" + xy).submit();
-      }
+        Swal.fire({ 
+          title: "Data Dihapus!",
+          text: "",
+          type: "success",
+          timer: 1000
+        }).then((result) => {
+          if (result.dismiss) {
+            document.getElementById("delete-form-" + xy).submit();
+          }else{
+            document.getElementById("delete-form-" + xy).submit();
+          }
+        });
+      };
     });
   });
 </script>

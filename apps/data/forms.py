@@ -11,12 +11,5 @@ class DataForm(ModelForm):
         # merelasikan form dengan model
         model = m_data
         # mengeset field apa saja yang akan ditampilkan pada form
-        fields = ('ekspor','jumlah','periode')
+        fields = ('s_fisik','s_verbal','s_psikologis')
         # mengatur teks label untuk setiap field
-        
-        # mengatur teks pesan error untuk setiap validasi fieldnya
-        error_messages = {
-            'nama_media': {
-                'required': _("Nama Media harus diisi."),
-            }
-        }

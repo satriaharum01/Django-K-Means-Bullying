@@ -17,8 +17,7 @@ from ..models import m_data
 def index(request):
     data = {}
     data['dt_history'] = m_data.objects.count()
-    data['dt'] = m_data.objects.all().order_by('-periode').values("id","jumlah","periode","ekspor").first()
-    print(data['dt'])
+    
     context = {"segment": "dashboard","value": data}
 
     html_template = loader.get_template("page/dashboard.html")

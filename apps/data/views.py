@@ -87,8 +87,6 @@ def json(request):
         for load in all_objs:
             periode = load['periode']
             load['DT_RowIndex']=i
-            load['bulan']= int(periode[5:7])
-            load['periode'] = month[load['bulan']] +' '+ load['periode'][0:4]
             i= i+1
             #for i in load.items():
             #    load.items

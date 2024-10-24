@@ -1,71 +1,53 @@
 import os
-from django import template
-from django.core import serializers
-from django.shortcuts import redirect, render
-from django.contrib import messages
+import pandas as pd
+import matplotlib.pyplot as plt
+from sklearn.cluster import KMeans
 from django.contrib.auth.decorators import login_required
 from django.template import loader
-from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
+from django.conf import settings
 
-# Tools
-import numpy as np
-import pandas as pd
-from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LinearRegression
-from sklearn.metrics import mean_squared_error, r2_score
-
-# Models Import
-from ..models import m_data
 
 # Create your views here.
 
 
 @login_required(login_url="/login/")
 def index(request):
-    # Mengambil semua data historis dari database
-    data = m_data.objects.all()
-
-    # Mengambil data ekspor dan permintaan
-    x = np.array([d.ekspor for d in data]).reshape(-1, 1)
-    y = np.array([d.jumlah for d in data])
-    z = []
     
-    # Membuat model regresi linear
-    model = LinearRegression()
-
-    # Melatih model
-    model.fit(x, y)
-
-    # Melakukan prediksi
-    # Prediksi menggunakan data yang sama
-    y_pred = model.predict(x)
-
-    # Menghitung residual (nilai aktual - nilai prediksi)
-    residuals = y - y_pred
-
-
-    # Evaluasi model
-    mse = mean_squared_error(y, y_pred)
-    r2 = r2_score(y, y_pred)
-    # Menghitung residual (nilai aktual - nilai prediksi)
-    residuals = y - y_pred
-
-    # Membuat dataframe untuk membandingkan nilai aktual, prediksi, dan residual
-    comparison_df = pd.DataFrame({
-        'Ekspor': x.ravel(),
-    })
+    # Membuat data dummy
+    data = {
+        'ID Siswa': [1, 2, 3, 4, 5],
+        'Skor Fisik': [30, 20, 35, 15, 25],
+        'Skor Verbal': [28, 22, 30, 20, 18],
+        'Skor Psikologis': [25, 15, 28, 10, 20]
+    }
     
-    residual_data = zip(z,y,y_pred,residuals)
-    #print(comparison_df.head())
+    # Membuat DataFrame
+    df = pd.DataFrame(data)
     
-    # Melihat koefisien regresi dan intercept
-    #print("Koefisien (Slope):", model.coef_[0])
-    #print("Intercept:", model.intercept_)
-    #print(f"Mean Squared Error: {mse}")
-    #print(f"R-squared: {r2}")
-    #print(f"Prediksi Bulan Depan: {y_pred}")
+    # Memilih kolom yang akan digunakan untuk clustering
+    X = df[['Skor Fisik', 'Skor Verbal', 'Skor Psikologis']]
+    
+    # Menerapkan K-Means dengan 3 kluster
+    kmeans = KMeans(n_clusters=3, random_state=0)
+    df['Kluster'] = kmeans.fit_predict(X)
+    
+    # Menampilkan hasil clustering
+    print(df)
+    
+    # Visualisasi kluster
+    plt.figure(figsize=(8, 6))
+    plt.scatter(df['Skor Fisik'], df['Skor Verbal'], c=df['Kluster'], cmap='viridis')
+    plt.xlabel('Skor Fisik')
+    plt.ylabel('Skor Verbal')
+    plt.title('Kluster Bullying Siswa')
 
-    context = {"title": 'Peramalan Regresi Linear',"segment": "peramalan", "slope":model.coef_[0],"intercept":model.intercept_,"prediksi": y_pred[0], "mse": mse, "r2": r2, "data": residual_data, "actual_data":data}
+    # Menyimpan gambar
+    image_path = os.path.join(settings.MEDIA_ROOT, 'k_means.png')
+    plt.savefig(image_path)
+    plt.close()  # Menutup grafik setelah disimpan
+    
+    context = {"title": 'Peramalan Regresi Linear',"segment": "peramalan","image_url": os.path.join(settings.STATIC_URL, 'k_means.png')}
 
     html_template = loader.get_template("page/peramalan.html")
     return HttpResponse(html_template.render(context, request))
