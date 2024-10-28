@@ -7,8 +7,10 @@ from django.contrib.auth.decorators import login_required
 from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http404
 
-# Models Import
+#Decorators
+from ..decorators import admin_required
 
+# Models Import
 from ..models import m_kuesioner
 
 # import class Form dari file forms.py
@@ -16,7 +18,7 @@ from .forms import KuesionerForm
 
 # Create your views here.
 
-@login_required(login_url="/login/")
+@admin_required
 def index(request):
     title = "Data Kuesioner"
     page = "kuesioner"

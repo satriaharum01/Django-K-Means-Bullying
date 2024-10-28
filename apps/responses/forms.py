@@ -3,15 +3,15 @@ from django.forms import ModelForm
 from django.utils.translation import gettext_lazy as _
 
 # import class Task dari file todo/models.py
-from ..models import m_kuesioner
+from ..models import m_response
 
-class KuesionerForm(ModelForm):
+class ResponsesForm(ModelForm):
     class Meta:
-        model = m_kuesioner
-        fields = ["question_text", "question_type"]
+        model = m_response
+        fields = ["kuesioner", "answer"]
         labels = {
-            "question_text": _("Kusioner:"),
-            "question_type": _("Kategori Bullying:"),
+            "kuesioner": _("Kusioner:"),
+            "answer": _("Jawaban:"),
         }
 
     def __init__(self, *args, **kwargs):
@@ -24,6 +24,8 @@ class KuesionerForm(ModelForm):
             self.fields[field].widget.attrs.update(
                 {"data-label": self.fields[field].label}
             )
+        
+        self.fields['kuesioner'].widget.attrs.update({"class": "form-control", 'required':True,'readonly':True})
 
     def as_div(self):
         """Metode ini digunakan untuk merender form dengan div."""

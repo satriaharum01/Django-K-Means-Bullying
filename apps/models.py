@@ -1,8 +1,8 @@
 from django.db import models
 from django.conf import settings
-
+from django.contrib.auth.models import AbstractUser
 # Create your models here.
-
+    
 class m_data(models.Model):
     id = models.IntegerField(primary_key=True, max_length=11)
     s_fisik = models.IntegerField(max_length=2, blank=True, null=True)
@@ -33,13 +33,22 @@ class m_kuesioner(models.Model):
         db_table = 'kuesioner'
 
 class m_response(models.Model):
-    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)  # Menghubungkan ke CustomUser
+    
+    RESPONSES_TYPES = [
+        ('0', 'Belum Dijawab'),
+        ('1', 'Sangat Jarang'),
+        ('2', 'Jarang'),
+        ('3', 'Kadang Kadang'),
+        ('4', 'Sering'),
+        ('5', 'Sangat Sering'),
+    ]
+    user_id = models.IntegerField()  # Menghubungkan ke CustomUser
     kuesioner = models.ForeignKey(m_kuesioner, on_delete=models.CASCADE)  # Menghubungkan ke pertanyaan kuesioner
-    answer = models.IntegerField()  # Jawaban (misalnya, skala 1-5)
+    answer = models.CharField(max_length=10,choices=RESPONSES_TYPES, default='0')  # Jawaban (misalnya, skala 1-5)
     submission_date = models.DateTimeField(auto_now_add=True)  # Waktu pengisian
 
     def __str__(self):
-        return f"Response by {self.user.email} for question {self.kuesioner.id}"
+        return f"{self.kuesioner.id} ({self.get_answer_display()})"
     
     class Meta:
         db_table = 'responses'

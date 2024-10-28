@@ -43,7 +43,7 @@ def index(request):
     plt.title('Kluster Bullying Siswa')
 
     # Menyimpan gambar
-    image_path = os.path.join(settings.MEDIA_ROOT, 'k_means.png')
+    image_path = os.path.join(settings.BASE_DIR, "static/k_means.png")
     plt.savefig(image_path)
     plt.close()  # Menutup grafik setelah disimpan
     

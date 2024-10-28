@@ -15,10 +15,8 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <div class="border-bottom d-flex justify-content-end mb-3 pb-2 tile-body">
-        <button type="button" class="btn btn-primary btn-add pull-right">
-          <i class="fa fa-plus"></i> Tambah Data
-        </button>
+      <div class="border-bottom d-flex justify-start-end mb-3 pb-2 tile-body">
+        <h2><i class="bi bi-clipboard-data"></i> Data Kuesioner {{user.first_name}} {{user.last_name}}</h2>
       </div>
       <div class="tile-body">
         <div class="table-responsive">
@@ -28,6 +26,7 @@
                 <th style="text-align: center" width="10%">No</th>
                 <th>Kuisoner</th>
                 <th>Type</th>
+                <th>Jawaban</th>
                 <th style="text-align: center" width="20%">Aksi</th>
               </tr>
             </thead>
@@ -76,9 +75,10 @@
 
 <script>
   $(function () {
+    kosongkan();
     table = $("#data-width").DataTable({
       searching: false,
-      ajax: '{% url "kuesioner/json" %}',
+      ajax: '{% url "siswa/kuesioner/json" %}',
       columns: [
         {
           data: "DT_RowIndex",
@@ -87,10 +87,14 @@
         },
         {
           data: "question_text",
-          className: "text-center",
+          className: "text-justify",
         },
         {
           data: "question_type",
+          className: "text-center",
+        },
+        {
+          data: "answer",
           className: "text-center",
         },
         {
@@ -100,11 +104,7 @@
           searchable: false,
           render: function (data, type, row) {
             return (
-              '<button type="button" class="btn btn-success btn-edit" data-id="' +data +'"><i class="fa fa-edit"></i> </button>\
-                        <a class="btn btn-danger btn-hapus" data-id="' +data +'" data-handler="data" href="delete/' +data +'">\
-                        <i class="fa fa-trash"></i> </a> \
-					              <form id="delete-form-' +data +'-data" action="{% url "kuesioner" %}delete/' +data +'" method="GET" style="display: none;">\
-                        </form>'
+              '<button type="button" class="btn btn-success btn-edit" data-id="' +data +'"><i class="fa fa-edit"></i> </button>'
             );
           },
         },
@@ -128,23 +128,19 @@
       },
     });
   }
-  //Button Trigger
-  $("body").on("click", ".btn-add", function () {
-    kosongkan();
-    jQuery("#compose-form").attr("action", "{% url 'kuesioner' %}save");
-    jQuery("#compose .modal-title").html("Tambah {{title}}");
-    jQuery("#compose").modal("toggle");
-  });
 
+  //Button Trigger
   $("body").on("click", ".btn-edit", function () {
     var id = jQuery(this).attr("data-id");
     find_data(id);
-    jQuery("#compose-form").attr("action", '{% url "kuesioner" %}update/' + id);
-    jQuery("#compose .modal-title").html("Update {{title}}");
+    jQuery("#compose-form").attr("action", '{% url "siswa/kuesioner" %}isi/' + id);
+    jQuery("#compose .modal-title").html("Isi Kuesioner");
     jQuery("#compose").modal("toggle");
   });
 
   $("body").on("click", ".btn-simpan", function () {
+    if(validate())
+    {
     Swal.fire({
       
      title: "Data Disimpan!",
@@ -158,6 +154,7 @@
           document.getElementById("compose-form").submit();
         }
       });
+    }
   });
 
   function set_value(value) {
@@ -166,11 +163,23 @@
       jQuery("#compose-form "+row.tagName+"[name="+row.name+"]").val(value[row.name]);
     })
   }
+  function validate()
+  {
+    let form = document.forms["compose-form"].getElementsByClassName("form-control");
+    $.each(form, function (index, row) {
+      let val = jQuery("#compose-form "+row.tagName+"[name="+row.name+"]").val();
+      if(val === null || val === "")
+      {
+        alert('Cek Form!');
+        return false;
+      }
+    })
+    return true;
+  }
   function kosongkan() {
-    document.getElementById("compose-form").reset();
-    //jQuery("#compose-form input[name=periode]").val("");
-    //jQuery("#compose-form input[name=jumlah]").val("");
-    //jQuery("#compose-form input[name=ekspor]").val("");
+    $('#id_kuesioner').children().each(function() {
+      $(this).removeClass().addClass("d-none");
+    })
   }
 </script>
 {% endblock js %}

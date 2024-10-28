@@ -26,8 +26,11 @@
             <thead>
               <tr>
                 <th style="text-align: center" width="10%">No</th>
-                <th>Kuisoner</th>
-                <th>Type</th>
+                <th>Username</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>First Name</th>
+                <th>Last Name</th>
                 <th style="text-align: center" width="20%">Aksi</th>
               </tr>
             </thead>
@@ -78,7 +81,7 @@
   $(function () {
     table = $("#data-width").DataTable({
       searching: false,
-      ajax: '{% url "kuesioner/json" %}',
+      ajax: '{% url "pengguna/json" %}',
       columns: [
         {
           data: "DT_RowIndex",
@@ -86,11 +89,23 @@
           className: "text-center",
         },
         {
-          data: "question_text",
+          data: "username",
           className: "text-center",
         },
         {
-          data: "question_type",
+          data: "email",
+          className: "text-center",
+        },
+        {
+          data: "group_name",
+          className: "text-center",
+        },
+        {
+          data: "first_name",
+          className: "text-center",
+        },
+        {
+          data: "last_name",
           className: "text-center",
         },
         {
@@ -131,7 +146,7 @@
   //Button Trigger
   $("body").on("click", ".btn-add", function () {
     kosongkan();
-    jQuery("#compose-form").attr("action", "{% url 'kuesioner' %}save");
+    jQuery("#compose-form").attr("action", "{% url 'pengguna' %}save");
     jQuery("#compose .modal-title").html("Tambah {{title}}");
     jQuery("#compose").modal("toggle");
   });
@@ -139,7 +154,7 @@
   $("body").on("click", ".btn-edit", function () {
     var id = jQuery(this).attr("data-id");
     find_data(id);
-    jQuery("#compose-form").attr("action", '{% url "kuesioner" %}update/' + id);
+    jQuery("#compose-form").attr("action", '{% url "pengguna" %}update/' + id);
     jQuery("#compose .modal-title").html("Update {{title}}");
     jQuery("#compose").modal("toggle");
   });

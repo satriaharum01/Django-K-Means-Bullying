@@ -9,12 +9,34 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 # Models Import
 from ..models import m_data
+from ..decorators import admin_required, siswa_required, guru_bk_required
 
 # Create your views here.
 
 
-@login_required(login_url="/login/")
+@admin_required
 def index(request):
+    data = {}
+    data['dt_history'] = m_data.objects.count()
+    
+    context = {"segment": "dashboard","value": data}
+
+    html_template = loader.get_template("page/dashboard.html")
+    return HttpResponse(html_template.render(context, request))
+
+
+@guru_bk_required
+def guru(request):
+    data = {}
+    data['dt_history'] = m_data.objects.count()
+    
+    context = {"segment": "dashboard","value": data}
+
+    html_template = loader.get_template("page/dashboard.html")
+    return HttpResponse(html_template.render(context, request))
+
+@siswa_required
+def siswa(request):
     data = {}
     data['dt_history'] = m_data.objects.count()
     
