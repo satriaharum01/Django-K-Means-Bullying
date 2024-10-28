@@ -12,8 +12,7 @@ from ..models import m_data
 from ..decorators import admin_required, siswa_required, guru_bk_required
 
 # Create your views here.
-
-
+@login_required
 @admin_required
 def index(request):
     data = {}
@@ -25,6 +24,7 @@ def index(request):
     return HttpResponse(html_template.render(context, request))
 
 
+@login_required
 @guru_bk_required
 def guru(request):
     data = {}
@@ -35,6 +35,7 @@ def guru(request):
     html_template = loader.get_template("page/dashboard.html")
     return HttpResponse(html_template.render(context, request))
 
+@login_required
 @siswa_required
 def siswa(request):
     data = {}

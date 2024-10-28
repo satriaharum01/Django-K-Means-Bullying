@@ -1,6 +1,6 @@
 from django.db import models
 from django.conf import settings
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import User
 # Create your models here.
     
 class m_data(models.Model):
@@ -42,7 +42,7 @@ class m_response(models.Model):
         ('4', 'Sering'),
         ('5', 'Sangat Sering'),
     ]
-    user_id = models.IntegerField()  # Menghubungkan ke CustomUser
+    user = models.ForeignKey(User, on_delete=models.CASCADE)  # Menghubungkan ke CustomUser
     kuesioner = models.ForeignKey(m_kuesioner, on_delete=models.CASCADE)  # Menghubungkan ke pertanyaan kuesioner
     answer = models.CharField(max_length=10,choices=RESPONSES_TYPES, default='0')  # Jawaban (misalnya, skala 1-5)
     submission_date = models.DateTimeField(auto_now_add=True)  # Waktu pengisian

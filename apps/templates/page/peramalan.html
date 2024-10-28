@@ -16,7 +16,73 @@
 <div class="row">
   <div class="col-md-12">
     <div class="tile">
-      <h3 class="tile-title"><i> Aktual Data</i></h3>
+      <h3 class="tile-title"><i> Data dan Kluster</i></h3>
+      <div class="tile-body">
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered" id="data-width" width="100%">
+            <thead>
+              <tr>
+                <th style="text-align: center" width="10%">ID Siswa</th>
+                <th>Siswa</th>
+                <th>Skor Fisik</th>
+                <th>Skor Verbal</th>
+                <th>Skor Psikilogi</th>
+                <th>Cluster</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for record in data_records %}
+              <tr>
+                <td>{{ record.ID_Siswa }}</td>
+                <td>{{ record.Siswa }}</td>
+                <td>{{ record.Skor_Fisik }}</td>
+                <td>{{ record.Skor_Verbal }}</td>
+                <td>{{ record.Skor_Psikologis }}</td>
+                <td>{{ record.Kluster }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="tile">
+      <h3 class="tile-title"><i> Interpretasi Jumlah Kluster dalam Konteks Bullying</i></h3>
+      <div class="tile-body">
+        <span>
+          Misalnya, jika Anda menetapkan jumlah kluster (n_clusters) menjadi 3, kluster-kluster yang dihasilkan dapat mengklasifikasikan siswa menjadi beberapa kategori berikut:
+        </span>
+        <ol>
+          <li>
+            <p><strong>Kluster Siswa yang Terpengaruh Rendah</strong>:</p>
+            <ul>
+              <li>Siswa dalam kluster ini mungkin memiliki skor rendah di semua kategori (fisik, verbal, dan
+                psikologis).</li>
+              <li>Artinya, mereka cenderung jarang mengalami perilaku bullying atau mungkin hanya sedikit terdampak.
+              </li>
+            </ul>
+          </li>
+          <li>
+            <p><strong>Kluster Siswa yang Terpengaruh Sedang</strong>:</p>
+            <ul>
+              <li>Siswa dalam kluster ini memiliki skor yang lebih tinggi dari kluster pertama tetapi tidak setinggi
+                kluster terakhir.</li>
+              <li>Mereka mungkin mengalami beberapa bentuk bullying, tetapi dampaknya masih moderat.</li>
+            </ul>
+          </li>
+          <li>
+            <p><strong>Kluster Siswa yang Terpengaruh Tinggi</strong>:</p>
+            <ul>
+              <li>Siswa dalam kluster ini memiliki skor tinggi di satu atau lebih kategori bullying.</li>
+              <li>Mereka cenderung sangat terdampak oleh bullying, baik fisik, verbal, atau psikologis, atau kombinasi
+                dari semuanya.</li>
+            </ul>
+          </li>
+        </ol>
+      </div>
+    </div>
+    <div class="tile">
+      <h3 class="tile-title"><i> Grafik k-Means</i></h3>
       <div class="tile-body">
         <img src="{{ image_url }}" alt="Regresi Linear">
       </div>
@@ -30,35 +96,4 @@
 <!-- Specific Page JS goes HERE  -->
 {% block js %}
 
-<script>
-  $(function () {
-    table = $("#data-width").DataTable({
-      searching: false,
-      lengthChange: false,
-      paging: false,
-      ordering: false,
-      info: false,
-      ajax: '{% url "data/json" %}',
-      columns: [
-        {
-          data: "DT_RowIndex",
-          name: "DT_RowIndex",
-          className: "text-center",
-        },
-        {
-          data: "periode",
-          className: "text-center",
-        },
-        {
-          data: "jumlah",
-          className: "text-center",
-        },
-        {
-          data: "ekspor",
-          className: "text-center",
-        },
-      ],
-    });
-  });
-</script>
 {% endblock js %}

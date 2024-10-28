@@ -44,7 +44,6 @@ def isi(request, data_id):
     
     if request.method == 'POST':
         form = ResponsesForm(request.POST, instance=response)
-        print(form)
         if form.is_valid():
             response = form.save(commit=False)  # Tidak simpan ke database dulu
             response.user_id = auth_id  # Set user dari parameter
@@ -92,16 +91,17 @@ def json(request):
     
 # FIND DATA OBJECT
 def find(request, data_id):
+    auth_id = request.user.id
     if request.method == "GET":
         all_objs = m_kuesioner.objects.all().values("id").filter(id=data_id)
         for load in all_objs:
-            response = m_response.objects.filter(id=load['id']).values("id","kuesioner_id","answer","submission_date")
+            kuesioner = m_kuesioner.objects.get(id=load['id'])
+            response = m_response.objects.filter(user_id=auth_id, kuesioner=kuesioner).first()
             load['kuesioner'] = load['id']
             if not response:
                 load['answer'] = 0
             else:   
-                load['answer'] = response[0]['answer']
-                
+                load['answer'] = response.answer
         data = {"data": list(all_objs)}
         return JsonResponse(data, safe=False)
     else:
