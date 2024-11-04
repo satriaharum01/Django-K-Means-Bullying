@@ -154,6 +154,9 @@
   $("body").on("click", ".btn-edit", function () {
     var id = jQuery(this).attr("data-id");
     find_data(id);
+    
+    jQuery("#compose-form input[name=password1]").removeAttr("required");
+    jQuery("#compose-form input[name=password2]").removeAttr("required");
     jQuery("#compose-form").attr("action", '{% url "pengguna" %}update/' + id);
     jQuery("#compose .modal-title").html("Update {{title}}");
     jQuery("#compose").modal("toggle");
@@ -179,6 +182,7 @@
     let form = document.forms["compose-form"].getElementsByClassName("form-control");
     $.each(form, function (index, row) {
       jQuery("#compose-form "+row.tagName+"[name="+row.name+"]").val(value[row.name]);
+      jQuery("#compose-form "+row.tagName+"[name="+row.name+"]").attr("required");
     })
   }
   function kosongkan() {
