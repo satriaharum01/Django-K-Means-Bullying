@@ -14,7 +14,7 @@
         <li><a class="app-menu__item {% if request.get_full_path == '/pusat/dashboard/' %} active {% endif %}" href="{% url 'admin/dashboard' %}"><i class="app-menu__icon bi bi-speedometer"></i><span class="app-menu__label">Dashboard</span></a></li>
         <li><a class="app-menu__item {% if request.get_full_path == '/pusat/pengguna/' %} active {% endif %}" href="{% url 'pengguna' %}"><i class="app-menu__icon bi bi-people"></i><span class="app-menu__label">Pengguna</span></a></li>
         <li><a class="app-menu__item {% if request.get_full_path == '/pusat/kuesioner/' %} active {% endif %}" href="{% url 'kuesioner' %}"><i class="app-menu__icon bi bi-clipboard-data"></i><span class="app-menu__label">Kuesioner</span></a></li>
-        <li><a class="app-menu__item {% if request.get_full_path == '/pusat/data/' %} active {% endif %}" href="{% url 'data' %}"><i class="app-menu__icon bi bi-database"></i><span class="app-menu__label">Data Hasil Responden</span></a></li>
+        <li><a class="app-menu__item {% if request.get_full_path == '/pusat/score/' %} active {% endif %}" href="{% url 'score' %}"><i class="app-menu__icon bi bi-database"></i><span class="app-menu__label">Data Hasil Responden</span></a></li>
         <li><a class="app-menu__item {% if request.get_full_path == '/pusat/peramalan/' %} active {% endif %}" href="{% url 'peramalan' %}"><i class="app-menu__icon bi bi-graph-up-arrow"></i><span class="app-menu__label">Peramalan</span></a></li>
         {% endif %}
         

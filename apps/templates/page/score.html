@@ -1,0 +1,83 @@
+{% extends "layouts/master.html" %} {% block title %} {{title}} {% endblock %}
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %} {% block content %}
+<!-- awal isi halaman -->
+<div class="app-title">
+  <div>
+    <h1><i class="bi bi-table"></i> {{title}}</h1>
+  </div>
+  <ul class="app-breadcrumb breadcrumb side">
+    <li class="breadcrumb-item"><i class="bi bi-house-door fs-6"></i></li>
+    <li class="breadcrumb-item active"><a href="#">{{title}}</a></li>
+  </ul>
+</div>
+<div class="row">
+  <div class="col-md-12">
+    <div class="tile">
+      <div class="border-bottom d-flex justify-content-end mb-3 pb-2 tile-body">
+        
+      </div>
+      <div class="tile-body">
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered" id="data-width" width="100%">
+            <thead>
+              <tr>
+                <th style="text-align: center" width="10%">No</th>
+                <th>Siswa</th>
+                <th>Kuesioner di Isi</th>
+                <th>Skor Fisik</th>
+                <th>Skor Verbal</th>
+                <th>Skor Psikilogi</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- akhir isi halaman -->
+{% endblock content %} {% block modal %}
+
+{% endblock modal %}
+<!-- Specific Page JS goes HERE  -->
+{% block js %}
+
+<script>
+  $(function () {
+    table = $("#data-width").DataTable({
+      searching: false,
+      ajax: '{% url "score/json" %}',
+      columns: [
+        {
+          data: "DT_RowIndex",
+          name: "DT_RowIndex",
+          className: "text-center",
+        },
+        {
+          data: "Siswa",
+          className: "text-center",
+        },
+        {
+          data: "jawaban",
+          className: "text-center",
+        },
+        {
+          data: "Skor_Fisik",
+          className: "text-center",
+        },
+        {
+          data: "Skor_Verbal",
+          className: "text-center",
+        },
+        {
+          data: "Skor_Psikologis",
+          className: "text-center",
+        },
+      ],
+    });
+  });
+</script>
+{% endblock js %}
