@@ -27,9 +27,7 @@ class PenggunaForm(UserCreationForm):
             "email",
             "role",
             "first_name",
-            "last_name",
-            "password1",
-            "password2",
+            "last_name"
         )
 
     def __init__(self, *args, **kwargs):

@@ -155,8 +155,6 @@
     var id = jQuery(this).attr("data-id");
     find_data(id);
     
-    jQuery("#compose-form input[name=password1]").removeAttr("required");
-    jQuery("#compose-form input[name=password2]").removeAttr("required");
     jQuery("#compose-form").attr("action", '{% url "pengguna" %}update/' + id);
     jQuery("#compose .modal-title").html("Update {{title}}");
     jQuery("#compose").modal("toggle");
@@ -192,4 +190,13 @@
     //jQuery("#compose-form input[name=ekspor]").val("");
   }
 </script>
+
+{% if err_page %}
+
+<script>
+  $(function () {
+    jQuery("#compose").modal("toggle");
+  })
+</script>
+{% endif %}
 {% endblock js %}

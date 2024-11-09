@@ -11,7 +11,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse, Http40
 from ..decorators import admin_required
 
 # Models Import
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 
 # import class Form dari file forms.py
 from .forms import PenggunaForm
@@ -24,7 +24,8 @@ def index(request):
     page = "kuesioner"
     data = User.objects.prefetch_related('groups').all()
     form = PenggunaForm()
-    context = {"data": data, "page": page, "title": title,"form":form}
+    passform = PenggunaForm()
+    context = {"data": data, "page": page, "title": title,"form":form,"passform":passform}
 
     html_template = loader.get_template("page/pengguna.html")
     return HttpResponse(html_template.render(context, request))
@@ -33,7 +34,6 @@ def index(request):
 def create(request):
     if request.method == 'POST':
         form = PenggunaForm(request.POST)
-        print(form)
         if form.is_valid():
             form.save()
             messages.success(request, 'Sukses tambah data.')
@@ -44,7 +44,7 @@ def create(request):
             title = "Data Pengguna"
             page = "kuesioner"
             data = User.objects.prefetch_related('groups').all()
-            context = {"data": data, "page": page, "title": title,"form":form}
+            context = {"data": data, "page": page, "title": title,"form":form,"err_page": 'error'}
             
             html_template = loader.get_template("page/pengguna.html")
             return HttpResponse(html_template.render(context, request))
@@ -56,34 +56,42 @@ def update(request, data_id):
     all_objs = User.objects.get(id=data_id)
     if request.method == 'POST':
         form = PenggunaForm(request.POST, instance=all_objs)
-        if form.password1:
-            if form.is_valid():
+        if form.is_valid():
+            password1 = form.cleaned_data['password1']
+            if password1:
                 form.save()
-
                 messages.success(request, 'Sukses update data.')
                 return redirect('pengguna')
             else:
-                messages.error(request, "Failed to create user. Please check the form for errors.")
+                User.objects.filter(pk=data_id).update(
+                    username=form.cleaned_data['username'],
+                    email=form.cleaned_data['email'],
+                    first_name=form.cleaned_data['first_name'],
+                    last_name=form.cleaned_data['last_name']
+                )
+                user = User.objects.get(pk=data_id)
+                user.groups.clear()
+                new_group_name = form.cleaned_data.get('role')  # Assuming 'role' corresponds to a group name
 
-                title = "Data Pengguna"
-                page = "kuesioner"
-                data = User.objects.prefetch_related('groups').all()
-                context = {"data": data, "page": page, "title": title,"form":form}
-
-                html_template = loader.get_template("page/pengguna.html")
-                return HttpResponse(html_template.render(context, request))
+                if new_group_name:
+                    user.groups.add(new_group_name)
+                    
+                return redirect('pengguna')
         else:
-            User.objects.filter(pk=data_id).update(
-                email=form.email,
-                first_name=form.first_name,
-                last_name=form.last_name
-            )
+            messages.error(request, "Failed to create user. Please check the form for errors.")
+            title = "Data Pengguna"
+            page = "kuesioner"
+            data = User.objects.prefetch_related('groups').all()
+            context = {"data": data, "page": page, "title": title,"form":form,"err_page": 'error'}
+            html_template = loader.get_template("page/pengguna.html")
+            return HttpResponse(html_template.render(context, request))
+        
             
         
     # Jika method-nya bukan POST
     else:
         return redirect('pengguna')
-    
+
 # DESTROY
 def delete(request, data_id):
     try:
