@@ -5,7 +5,7 @@ from django.template import loader
 from django.http import HttpResponse, JsonResponse
 
 # Decorators
-from ..decorators import admin_required
+from ..decorators import admin_required, guru_bk_required
 
 # Models Import
 from django.contrib.auth.models import User
@@ -16,6 +16,15 @@ from ..models import m_kuesioner, m_response
 
 @admin_required
 def index(request):
+    title = "Data Hasil Kuesioner"
+    page = "Score"
+    context = {"page": page, "title": title}
+
+    html_template = loader.get_template("page/score.html")
+    return HttpResponse(html_template.render(context, request))
+
+@guru_bk_required
+def index_guru(request):
     title = "Data Hasil Kuesioner"
     page = "Score"
     context = {"page": page, "title": title}

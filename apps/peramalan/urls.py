@@ -4,7 +4,8 @@ from django.urls import path, re_path
 from . import views
 
 urlpatterns = [
-    path('peramalan/', views.index, name='peramalan')
+    path('peramalan/', views.index, name='peramalan'),
+    path('guru/peramalan/', views.index_guru, name='guru/peramalan')
 ]
 
 # Menyajikan file media saat dalam mode pengembangan

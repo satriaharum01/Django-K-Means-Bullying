@@ -21,7 +21,7 @@ class CustomLoginView(LoginView):
             return redirect('siswa/dashboard')  # Ubah sesuai URL name dashboard siswa
         
         # Jika tidak ada grup yang sesuai
-        return redirect('default_dashboard')  # Ubah sesuai URL name dashboard default
+        return redirect('pusat/dashboard')  # Ubah sesuai URL name dashboard default
  
 class HomeView(View):
     template_name = 'accounts/home.html'

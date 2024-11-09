@@ -8,7 +8,8 @@ from django.template import loader
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 
 # Models Import
-from ..models import m_data
+from django.contrib.auth.models import User
+from ..models import m_data, m_kuesioner, m_response
 from ..decorators import admin_required, siswa_required, guru_bk_required
 
 # Create your views here.
@@ -16,7 +17,9 @@ from ..decorators import admin_required, siswa_required, guru_bk_required
 @admin_required
 def index(request):
     data = {}
-    data['dt_history'] = m_data.objects.count()
+    data['siswa'] = User.objects.filter(groups__name='Siswa').count()
+    data['kuesioner'] = m_kuesioner.objects.count()
+    data['jawaban'] = m_response.objects.count()
     
     context = {"segment": "dashboard","value": data}
 
@@ -28,7 +31,9 @@ def index(request):
 @guru_bk_required
 def guru(request):
     data = {}
-    data['dt_history'] = m_data.objects.count()
+    data['siswa'] = User.objects.filter(groups__name='Siswa').count()
+    data['kuesioner'] = m_kuesioner.objects.count()
+    data['jawaban'] = m_response.objects.count()
     
     context = {"segment": "dashboard","value": data}
 
@@ -38,8 +43,17 @@ def guru(request):
 @login_required
 @siswa_required
 def siswa(request):
+    
+    auth_id = request.user.id
     data = {}
-    data['dt_history'] = m_data.objects.count()
+    siswa = User.objects.prefetch_related('groups').all().filter(id=auth_id)
+    
+    for student in siswa:
+        full_name = f"{student.first_name} {student.last_name}"
+        
+    data['siswa'] = full_name
+    data['kuesioner'] = m_kuesioner.objects.count()
+    data['jawaban'] = m_response.objects.filter(user=request.user).count()
     
     context = {"segment": "dashboard","value": data}
 

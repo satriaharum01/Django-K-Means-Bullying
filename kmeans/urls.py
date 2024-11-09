@@ -11,5 +11,7 @@ urlpatterns = [
     path('pusat/', include('apps.pengguna.urls')),
     path('pusat/', include('apps.peramalan.urls')),
     path('pusat/', include('apps.score.urls')),
-    path('siswa/', include('apps.responses.urls'))
+    path('siswa/', include('apps.responses.urls')),
+    path('', include('apps.peramalan.urls')),
+    path('', include('apps.score.urls')),
 ]
